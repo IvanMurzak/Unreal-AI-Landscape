@@ -2,8 +2,8 @@
 
 This is the **Unreal AI Landscape** extension — a C++ `Type=Editor` Unreal Engine plugin that
 implements the Unreal-MCP contract `IUnrealMcpToolProvider` and contributes a family of MCP tools for
-**terrain authoring** to AI Game Developer (Unreal-MCP). It wraps the engine's built-in **Landscape**
-module together with the **Water** and **Landmass** plugins. It was scaffolded from
+**terrain inspection** to AI Game Developer (Unreal-MCP). It wraps the engine's built-in **Landscape**
+module together with the **Water** plugin. It was scaffolded from
 `IvanMurzak/Unreal-AI-Template`; the plugin/module is `UnrealAILandscape` (UE module names can't
 contain `-`, so the repo's `Unreal-AI-Landscape` becomes `UnrealAILandscape`).
 
@@ -11,33 +11,30 @@ The dependency on the wrapped engine plugin(s) (a `.Build.cs` module dep + a `.u
 entry) **is the gating**: this extension won't compile or load unless they are present in the host
 project.
 
-> **Gating wired in the scaffold:** ONE engine plugin — **`Water`** (`.uplugin` `Plugins[]` +
-> `Water` / `WaterEditor` module deps). The built-in `Landscape` / `LandscapeEditor` modules (always
-> present in the engine, so NO `Plugins[]` entry — a `{ "Name": "Landscape" }` entry would fail UBT
-> with "plugin not found") and the `Landmass` plugin are added by hand during implementation:
-> `Landscape` as a plain `.Build.cs` module dep, `Landmass` as an extra `Plugins[]` entry + module dep.
+> **Gating:** ONE engine plugin — **`Water`** (`.uplugin` `Plugins[]` + the `Water` runtime module
+> dep in `.Build.cs`). The built-in `Landscape` module (always present in the engine, so NO
+> `Plugins[]` entry — a `{ "Name": "Landscape" }` entry would fail UBT with "plugin not found") is a
+> plain `.Build.cs` module dep. Every tool reads runtime classes (AWaterBody / UWaterBodyComponent /
+> AWaterZone / ALandscapeProxy / ULandscapeInfo), so no editor-only Water/Landscape module is needed;
+> `UnrealEd` provides `GEditor` + the editor world. (No Landmass — the tool family is inspection-only.)
 
-> **Scaffold state:** this repo is a freshly-initialized skeleton — the gating + CI are wired but the
-> terrain tools are **not implemented yet**. The provider currently registers only the sample
-> `hello-extension` tool; the implementation step replaces it with the `landscape-*` tools below.
-
-## The tools (planned)
+## The tools
 
 The provider (`FUnrealAILandscapeProvider` in
-`UnrealAILandscape/Source/UnrealAILandscape/Private/UnrealAILandscapeModule.cpp`) will register
-terrain tools via the fluent `Registry.Tool(...).Handle(...)` builder:
+`UnrealAILandscape/Source/UnrealAILandscape/Private/UnrealAILandscapeModule.cpp`) registers these
+read-only terrain-inspection tools via the fluent `Registry.Tool(...).Handle(...)` builder:
 
-- `landscape-list` — list Landscape actors / proxies in the active editor world, read-only.
-- `landscape-get` — inspect a Landscape actor (size, components, paint layers), read-only.
-- `landscape-create` — create a Landscape actor in the editor world.
-- `landscape-add-water-body` — add a Water body (ocean / lake / river) actor to the world.
-- `landscape-add-landmass-brush` — add a Landmass blueprint brush for sculpting a Landscape.
+- `landscape-list-actors` — list Landscape actors / proxies in the active editor world (read-only).
+- `landscape-get-actor` — inspect a Landscape actor by name: section layout, components, material, paint layers (read-only).
+- `landscape-list-water-bodies` — list Water bodies (River / Lake / Ocean / Custom) + spline-point count (read-only).
+- `landscape-get-water-body` — inspect a Water body by name: type, spline points, water material, water zone (read-only).
+- `landscape-list-water-zones` — list Water zones (world location, 2D zone extent) (read-only).
 
-The exact set is settled during implementation; `extension.json` `tools[]` + the README table are the
-source of truth, and each tool ships one UE Automation spec + one E2E check. Handlers run on the
-**game thread** and call Landscape / Water / Landmass / editor APIs directly; mutating tools validate
-engine state defensively (UE has no C++ exceptions — a crash in a handler is an editor crash) and
-return `FUnrealMcpToolResult::Error(...)`, never an unchecked deref.
+`extension.json` `tools[]` + the README table are the source of truth, and each tool ships one UE
+Automation spec + one E2E check. Handlers run on the **game thread** and call Landscape / Water /
+editor APIs directly; every handler validates engine state defensively (UE has no C++ exceptions — a
+crash in a handler is an editor crash) and returns `FUnrealMcpToolResult::Error(...)`, never an
+unchecked deref.
 
 ## The contract (read before editing tools)
 
