@@ -1,20 +1,20 @@
 <h1 align="center">Unreal AI Landscape</h1>
 
 <p align="center">
-  A <b>terrain authoring</b> tool extension for
+  A <b>terrain inspection</b> tool extension for
   <a href="https://github.com/IvanMurzak/Unreal-MCP">AI Game Developer (Unreal-MCP)</a>.
-  Lets an AI agent create and inspect Landscape actors, add water bodies, and place Landmass
-  sculpting brushes — all from inside the Unreal Editor.
+  Lets an AI agent inspect Landscape actors, Water bodies, and Water zones in the active editor
+  world — all from inside the Unreal Editor.
 </p>
 
 ---
 
 **Unreal AI Landscape** is an Unreal Engine **`Type=Editor` plugin** that implements the Unreal-MCP
 contract `IUnrealMcpToolProvider` and contributes a focused family of MCP tools for terrain
-authoring. It wraps the engine's built-in **Landscape** module together with the **Water** and
-**Landmass** plugins. Unreal-MCP discovers the provider at boot (and live, when the plugin loads
-later) and merges these tools into the advertised set, so an AI agent can drive terrain workflows
-against the live editor. Enabling / disabling the extension live-updates what the AI sees.
+inspection. It wraps the engine's built-in **Landscape** module together with the **Water** plugin.
+Unreal-MCP discovers the provider at boot (and live, when the plugin loads later) and merges these
+tools into the advertised set, so an AI agent can inspect terrain and water in the live editor.
+Enabling / disabling the extension live-updates what the AI sees.
 
 > Authoring is **C++** (unlike Unity's C# `[McpPluginTool]`). The extension takes a compile-time
 > dependency on the engine plugin(s) it wraps — that dependency **is the gating**: the extension
@@ -22,36 +22,30 @@ against the live editor. Enabling / disabling the extension live-updates what th
 
 ## Gating
 
-The scaffold wires **one** engine plugin as the gate: the **`Water`** plugin
-(`.uplugin` `Plugins[]` entry + `Water` / `WaterEditor` module deps in `.Build.cs`). The built-in
-`Landscape` / `LandscapeEditor` modules (always present in the engine, so no `Plugins[]` entry) and
-the `Landmass` plugin are added during implementation — `Landscape` as a plain `.Build.cs` module
-dependency, `Landmass` as an additional `Plugins[]` entry + module dep.
+**One** engine plugin is the gate: the **`Water`** plugin (`.uplugin` `Plugins[]` entry + the `Water`
+runtime module dep in `.Build.cs`) — the dependency is the gate, so the extension won't compile or
+load unless the Water plugin is present in the host project. The engine's built-in **`Landscape`**
+module is a plain `.Build.cs` module dependency with **no** `Plugins[]` entry (built-in engine
+modules are always present — a `{ "Name": "Landscape" }` entry would fail UBT with "plugin not
+found"). Every tool reads runtime classes, so no editor-only Water/Landscape module is needed.
 
-## Status
+## Tools
 
-This repository is a freshly-scaffolded **skeleton**: the gating against the `Water` plugin is wired
-and the CI is live, but the terrain tools are **not implemented yet** — the provider currently
-registers only the sample `hello-extension` tool the template ships, which the implementation step
-replaces with the tools below.
-
-## Tools (planned)
-
-This extension will contribute the following terrain tools (ids are kebab-case, prefixed `landscape-`;
-handlers run on the game thread and call Landscape / Water / Landmass / editor APIs directly).
-Mutating tools validate engine state defensively and return a structured error rather than crashing
-the editor.
+This extension contributes the following read-only terrain-inspection tools (ids are kebab-case,
+prefixed `landscape-`; handlers run on the game thread and call Landscape / Water / editor APIs
+directly). Every handler validates engine state defensively and returns a structured error rather
+than crashing the editor.
 
 | Tool | Kind | What it does |
 | --- | --- | --- |
-| `landscape-list` | read-only | List the Landscape actors / proxies in the active editor world. |
-| `landscape-get` | read-only | Inspect a Landscape actor: size, component layout, paint layers. |
-| `landscape-create` | mutating | Create a Landscape actor in the editor world. |
-| `landscape-add-water-body` | mutating | Add a Water body (ocean / lake / river) actor to the world. |
-| `landscape-add-landmass-brush` | mutating | Add a Landmass blueprint brush for sculpting a Landscape. |
+| `landscape-list-actors` | read-only | List the Landscape actors / proxies in the active editor world (class, primary/proxy, component count). |
+| `landscape-get-actor` | read-only | Inspect a Landscape actor by name: section layout, component count, landscape material, paint layers. |
+| `landscape-list-water-bodies` | read-only | List the Water bodies in the active editor world (type River / Lake / Ocean / Custom, spline-point count). |
+| `landscape-get-water-body` | read-only | Inspect a Water body by name: type, spline-point count, water material, owning water zone. |
+| `landscape-list-water-zones` | read-only | List the Water zones in the active editor world (world location, 2D zone extent). |
 
-> The exact tool set is finalized during implementation; each tool ships with one UE Automation spec
-> and one E2E `unreal-mcp-cli` check. `extension.json` `tools[]` and this table are the source of truth.
+> Each tool ships with one UE Automation spec and one E2E `unreal-mcp-cli` check. `extension.json`
+> `tools[]` and this table are the source of truth.
 
 ## Install
 
@@ -79,7 +73,7 @@ panel.
 UnrealAILandscape/                                  the UE plugin
 ├── UnrealAILandscape.uplugin                        descriptor; Type=Editor; Plugins: [ UnrealMCP, Water ]
 └── Source/UnrealAILandscape/
-    ├── UnrealAILandscape.Build.cs                   deps: UnrealMcpRuntime + UnrealMcpEditor + Water(+Editor)
+    ├── UnrealAILandscape.Build.cs                   deps: UnrealMcpRuntime + UnrealMcpEditor + UnrealEd + Water + Landscape
     └── Private/
         ├── UnrealAILandscapeModule.cpp              the IUnrealMcpToolProvider + module; registers the tools
         └── Tests/UnrealAILandscapeSpec.cpp          UE Automation specs (one It(...) per tool)

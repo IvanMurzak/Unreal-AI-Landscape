@@ -20,7 +20,7 @@ public class UnrealAILandscape : ModuleRules
 			"Engine",
 			"Projects",
 			// "Json" is needed because the public registry header (UnrealMcpToolRegistry.h) includes
-			// Dom/JsonObject.h, and the sample handler builds a structured result with FJsonObject.
+			// Dom/JsonObject.h, and every handler builds a structured result with FJsonObject.
 			"Json",
 
 			// --- Unreal-MCP contract (REQUIRED) ---------------------------------------------------
@@ -32,14 +32,21 @@ public class UnrealAILandscape : ModuleRules
 			"UnrealMcpRuntime",
 			"UnrealMcpEditor",
 
-			// --- Your feature's engine modules (THE GATING) ---------------------------------------
-			// Uncomment + rename these to the engine plugin/module(s) your tools wrap. This dependency
-			// IS the "gating": the extension won't compile or load without the engine plugin it targets.
-			// `commands/init.ps1 -FeaturePlugin <Name>` wires the matching { "Name": "<Feature>" } entry
-			// into the .uplugin "Plugins" array; uncomment the lines below to take a real code dependency.
-			//   e.g. for Niagara: "Niagara", "NiagaraEditor"
+			// --- Editor support ------------------------------------------------------------------
+			// UnrealEd: GEditor + GetEditorWorldContext().World() — every tool inspects the active
+			// editor world. (Editor.h lives in UnrealEd.)
+			"UnrealEd",
+
+			// --- Feature engine modules (THE GATING) ---------------------------------------------
+			// "Water" is the gating ENGINE PLUGIN (its runtime module). This dependency IS the gate:
+			// the extension won't compile or load without the Water plugin present in the host project.
+			// The matching { "Name": "Water" } entry is declared in the .uplugin "Plugins" array.
+			// (No "WaterEditor": every tool here reads runtime Water classes — AWaterBody /
+			// UWaterBodyComponent / AWaterZone / UWaterSplineComponent — so no editor-only Water API is
+			// touched. "Landscape" below is a BUILT-IN engine module, NOT a plugin, so it takes a plain
+			// module dependency and NO .uplugin "Plugins" entry.)
 			"Water",
-			"WaterEditor",
+			"Landscape",
 		});
 	}
 }
