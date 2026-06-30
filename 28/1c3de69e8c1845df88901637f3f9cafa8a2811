@@ -1,0 +1,53 @@
+Tests/e2e/tools/landscape-list-actors.e2e.ps1
+  s_e3cea916442b5e::t_e3328bc6439436 1-17
+Tests/e2e/tools/landscape-get-actor.e2e.ps1
+  s_e3cea916442b5e::t_bce0510d1dbd71 1-17
+Tests/e2e/tools/landscape-list-water-bodies.e2e.ps1
+  s_e3cea916442b5e::t_0c821f8c5c2840 1-17
+CLAUDE.md
+  s_e3cea916442b5e::t_a182fa4ef6cebc 14-19,21,24-37
+  s_e3cea916442b5e::t_85270619ec15c2 5-6
+Tests/e2e/tools/landscape-list-water-zones.e2e.ps1
+  s_e3cea916442b5e::t_3f29b3eb85068a 1-17
+README.md
+  s_e3cea916442b5e::t_d2808a86709df3 4,6-7
+  s_e3cea916442b5e::t_9da99c821931f7 14-17
+  s_e3cea916442b5e::t_5276c868b78c39 25-30,32,34-37,41-45,47-48
+  s_e3cea916442b5e::t_bbbc8df173fb29 76
+Tests/e2e/tools/landscape-get-water-body.e2e.ps1
+  s_52bfd8633bca95::t_5e76dd2240802e 1-18
+extension.json
+  s_d3bf4e199f1710::t_3de4308e5858b3 10-16
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.5",
+  "base_commit_sha": "281c3de69e8c1845df88901637f3f9cafa8a2811",
+  "prompts": {},
+  "sessions": {
+    "s_52bfd8633bca95": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2d9bda5b-4e10-4c2c-a34a-3932ba4a1c0e",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Ivan Murzak <Ivan.D.Murzak@gmail.com>"
+    },
+    "s_d3bf4e199f1710": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "agent-aaa1a3ff33c779151",
+        "model": "unknown"
+      },
+      "human_author": "Ivan Murzak <Ivan.D.Murzak@gmail.com>"
+    },
+    "s_e3cea916442b5e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c575ab56-73e6-4952-bb8b-fef415924e27",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Ivan Murzak <Ivan.D.Murzak@gmail.com>"
+    }
+  }
+}
