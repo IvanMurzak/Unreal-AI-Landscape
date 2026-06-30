@@ -1,0 +1,35 @@
+README.md
+  s_e3cea916442b5e::t_950d4a150cbc2f 1,4,6-7,12-17,19-21,23,25-29,31,33-36,38,40-43,45-51,53-54,56,58-63,65-67,69-74,76,78-90,92,94,97-98,100,104,107,110-113,115,125-128,130,134-136,139-140
+CLAUDE.md
+  s_e3cea916442b5e::t_5882ec0d9e2db5 1,3-8,10-12,14-42,50,62-65,69-70,72-74,76,78-79,84-85
+Tests/e2e/tools/hello-extension.e2e.ps1
+  s_e3cea916442b5e::t_da36b5b8aafa2d 5
+UnrealAILandscape/Source/UnrealAILandscape/Private/Tests/UnrealAILandscapeSpec.cpp
+  s_e3cea916442b5e::t_7ac2a67d5b0fc4 1,18,24,30,37,46,48,50,56,61,66,70,81,86
+UnrealAILandscape/Source/UnrealAILandscape/Private/UnrealAILandscapeModule.cpp
+  s_e3cea916442b5e::t_a334737260a3c3 1,10,20,23-24,37,39-40,49,65,70,72,81,86,89
+UnrealAILandscape/Source/UnrealAILandscape/UnrealAILandscape.Build.cs
+  s_e3cea916442b5e::t_cb4d45c70db213 1,6,8,41-42
+UnrealAILandscape/UnrealAILandscape.uplugin
+  s_e3cea916442b5e::t_258168ba423bec 5,8-10,12,19,28-31
+docs/claude/architecture.md
+  s_e3cea916442b5e::t_f3c89a35eb32ee 31-34,44
+extension.json
+  s_e3cea916442b5e::t_36a47ba383fc2f 2-3,5-6,9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.4",
+  "base_commit_sha": "4c210b88df9fa0a531655e30611cb9c0bb2a5236",
+  "prompts": {},
+  "sessions": {
+    "s_e3cea916442b5e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c575ab56-73e6-4952-bb8b-fef415924e27",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Ivan Murzak <Ivan.D.Murzak@gmail.com>"
+    }
+  }
+}
