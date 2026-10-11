@@ -1,18 +1,18 @@
 # Unreal-AI-Landscape
 
 The **Unreal AI Landscape** extension for AI Game Developer (Unreal-MCP): a C++ `Type=Editor` UE plugin
-(`UnrealAILandscape`) implementing `IUnrealMcpToolProvider` that contributes MCP tools wrapping the engine's built-in **Landscape** module and the **Water** plugin (terrain inspection). Scaffolded
-from `IvanMurzak/Unreal-AI-Template` — it is now its own extension; do not edit it as the template.
+(`UnrealAILandscape`) implementing `IUnrealMcpToolProvider`; its MCP tools wrap the engine's built-in **Landscape** module and the **Water** plugin (terrain inspection).
+Scaffolded from `IvanMurzak/Unreal-AI-Template`, but now its own extension — do not edit it as the template.
 
 **Gating:** ONE engine plugin, **`Water`** (`.uplugin` `Plugins[]` + the `Water` runtime module dep in `.Build.cs`). `Landscape` is a built-in engine module, so it is a plain `.Build.cs` dep with NO `Plugins[]` entry (one would fail UBT with "plugin not found"). Tools read only runtime classes (`AWaterBody`, `UWaterBodyComponent`, `AWaterZone`, `ALandscapeProxy`, `ULandscapeInfo`), so no editor-only Water/Landscape module is needed; `UnrealEd` provides `GEditor` + the editor world. No Landmass.
 
 ## Layout
 
-- `UnrealAILandscape/` — the plugin (the only folder the release zip ships): `UnrealAILandscape.uplugin` + `Source/UnrealAILandscape/`
-  (`UnrealAILandscape.Build.cs`, `Private/UnrealAILandscapeModule.cpp` = provider `FUnrealAILandscapeProvider` + module, `Private/Tests/` = Automation specs).
-- `Tests/e2e/` — `Run-ToolChecks.ps1` harness + `tools/<tool-id>.e2e.ps1`, one check per tool.
+- `UnrealAILandscape/` — the plugin, the only folder the release zip ships: `UnrealAILandscape.uplugin` + `Source/UnrealAILandscape/`
+  (`UnrealAILandscape.Build.cs`; `Private/UnrealAILandscapeModule.cpp` = provider `FUnrealAILandscapeProvider` + module; `Private/Tests/` = Automation specs).
+- `Tests/e2e/` — `Run-ToolChecks.ps1` harness + `tools/<tool-id>.e2e.ps1` checks.
 - `commands/` — `bump-version`, `get-version`, `update-core`; `init` was the one-time scaffold (not rerun).
-- `extension.json` — install-catalog manifest (`version` mirrors the `.uplugin`; `minCoreVersion`, `enginePlugins`, `tools[]`).
+- `extension.json` — install-catalog manifest (`version`, `minCoreVersion`, `enginePlugins`, `tools[]`).
 - `.github/workflows/` — `test_pull_request.yml` (calls `test_unreal_plugin.yml` + E2E), version-gated `release.yml`, `bump_version.yml`.
 - `docs/claude/` — `architecture.md` (extension shape, contract), `ci.md` (workflows, repo variables,
   self-hosted runner gating), `release.md` (version gate, atomic source-zip release).
